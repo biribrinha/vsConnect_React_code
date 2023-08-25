@@ -1,4 +1,5 @@
 
+import { Link } from "react-router-dom";
 
 function cardServicos(props: any) {
 
@@ -7,15 +8,19 @@ function cardServicos(props: any) {
             <li>
                 <div className="servico">
                     <div className="topo_servico">
-                        <h3>{props.titulo}</h3>
-                        <span>R$ {props.proposta}</span>
+                        <Link to={'/servico/' + props.id}>
+
+                            <h3>{props.nome}</h3>
+                            
+                        </Link>
+                        <span>R$ {props.valor}</span>
                     </div>
                     <p>{props.descricao}</p>
                     <div className="techs_servicos">
                         {
-                            props.listaTechs.map((tech: string, indice: number) => {
+                            props.listaTechs.map((techs: string, indice: number) => {
 
-                                return <span key={indice}>{tech}</span>
+                                return <span key={indice}>{techs}</span>
                             })
                         }
                     </div>

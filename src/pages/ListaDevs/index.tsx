@@ -5,36 +5,69 @@ import "./style.css";
 import CardDev from "../../components/CardDev";
 
 //hooks
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+
+//importando a api
+import api from "../../utils/api";
 
 function ListaDevs() {
 
-    const [devs, setDevs] = useState<any[]>([
-        {
-            img_perfil: "https://github.com/Thiago-Nascimento.png",
-            nome: "Thiago Nascimento",
-            email: "thiago@email.com",
-            skills: ["HTML", "CSS", "React"]
-        },
-        {
-            img_perfil: "https://github.com/JessicaSanto.png",
-            nome: "Jessica Franzon",
-            email: "jessica@email.com",
-            skills: ["HTML", "CSS", "React"]
-        },
-        {
-            img_perfil: "https://github.com/odirlei-assis.png",
-            nome: "Odirlei Sabella",
-            email: "odirlei@email.com",
-            skills: ["HTML", "CSS", "React"]
-        },
-        {
-            img_perfil: "https://github.com/alexiamelhado18.png",
-            nome: "Aléxia Vitória",
-            email: "alexia@email.com",
-            skills: ["PYTHON", "VUE", "React"]
+    const [devs, setDevs] = useState<any[]>([]);
+
+
+    const [skillDigitado, setSkillDigitado] = useState<string>("");
+
+
+    function buscarDevPorSkill(event: any) {
+        //não recarrega a pagina
+        event.preventDefault();
+
+        //filtrar devs pela skill digitada no campo buscar
+        const devsFiltrados = devs.filter((dev: any) => dev.hardSkills.includes(skillDigitado.toLocaleUpperCase()));
+
+        if (devsFiltrados.length === 0) {
+            alert("Nenhum desenvolvedor(a) com essa skill :(")
+        } else {
+            //atribui valor de devs filtrado, ao state ListaDevsFiltrados 
+            setDevs(devsFiltrados);
         }
-    ]);
+
+    }
+
+    function verificarCampoSkill(event: any) {
+
+        if (event.target.value === "") {
+
+            listarDesenvolvedores();
+        }
+
+        setSkillDigitado(event.target.value);
+    }
+
+    function listarDesenvolvedores() {
+
+        api.get("users")
+            .then((response: any) => {
+
+                console.log(response);
+
+                setDevs(response.data)
+
+            })
+
+            .catch((error: any) => {
+
+                console.log("Erro ao realizar uma requisicao: ", error);
+
+            })
+    }
+
+    useEffect(() => {
+
+        // executar a ação 
+        listarDesenvolvedores();
+    }, [])
 
     return (
         <>
@@ -58,6 +91,10 @@ function ListaDevs() {
                             </div>
                         </form>
                         <div className="wrapper_lista">
+
+
+                            {/* COLOCANDO DADOS DA API */}
+
                             <ul>
                                 {
                                     devs.map((dev: any, indice: number) => {
@@ -65,10 +102,11 @@ function ListaDevs() {
                                         return <li key={indice} >
 
                                             <CardDev
-                                                foto={dev.img_perfil}
+                                                id={dev.id}
+                                                foto={dev.user_img}
                                                 nome={dev.nome}
                                                 email={dev.email}
-                                                listaTechs={dev.skills}
+                                                listaTechs={dev.hardSkills}
                                             />
 
                                         </li>
@@ -76,6 +114,10 @@ function ListaDevs() {
                                 }
 
                             </ul>
+
+                            {/* COLOCANDO DADOS DA API */}
+
+
                         </div>
                     </div>
                 </div>
